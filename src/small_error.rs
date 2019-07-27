@@ -63,7 +63,7 @@ impl<F: Fail> From<F> for Error {
         };
 
         unsafe {
-            let vtable = mem::transmute::<_, TraitObject>(&failure as &Fail).vtable;
+            let vtable = mem::transmute::<_, TraitObject>(&failure as &dyn Fail).vtable;
 
             let ptr: *mut InnerRaw<F> = match Heap.alloc(Layout::new::<InnerRaw<F>>()) {
                 Ok(p)   => p as *mut InnerRaw<F>,
@@ -87,9 +87,9 @@ impl<F: Fail> From<F> for Error {
 }
 
 impl Inner {
-    fn failure(&self) -> &Fail {
+    fn failure(&self) -> &dyn Fail {
         unsafe {
-            mem::transmute::<TraitObject, &Fail>(TraitObject {
+            mem::transmute::<TraitObject, &dyn Fail>(TraitObject {
                 data: &self.failure as *const FailData,
                 vtable: self.vtable,
             })
@@ -110,7 +110,7 @@ impl Error {
     /// Returns a reference to the underlying cause of this `Error`. Unlike the
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
-    pub fn cause(&self) -> &Fail {
+    pub fn cause(&self) -> &dyn Fail {
         self.inner.failure()
     }
 
@@ -176,7 +176,7 @@ impl Error {
 
     /// Returns the "root cause" of this error - the last value in the
     /// cause chain which does not return an underlying `cause`.
-    pub fn root_cause(&self) -> &Fail {
+    pub fn root_cause(&self) -> &dyn Fail {
         ::find_root_cause(self.cause())
     }
 

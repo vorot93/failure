@@ -32,7 +32,7 @@ of causes, for example, getting the entire series of causes for an error:
 
 ```rust
 // Assume err is a type that implements `Fail`
-let mut fail: &Fail = err;
+let mut fail: &dyn Fail = err;
 
 while let Some(cause) = fail.cause() {
     println!("{}", cause);
@@ -43,7 +43,7 @@ while let Some(cause) = fail.cause() {
 }
 ```
 
-Because `&Fail` supports downcasting, you can also inspect causes in more
+Because `&dyn Fail` supports downcasting, you can also inspect causes in more
 detail if you are expecting a certain failure:
 
 ```rust
@@ -63,7 +63,7 @@ For convenience an iterator is also provided:
 
 ```rust
 // Assume err is a type that implements `Fail`
-let mut fail: &Fail = err;
+let mut fail: &dyn Fail = err;
 
 for cause in fail.iter_causes() {
     println!("{}", cause);

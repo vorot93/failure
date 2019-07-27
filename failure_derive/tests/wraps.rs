@@ -1,5 +1,4 @@
 extern crate failure;
-#[macro_use]
 extern crate failure_derive;
 
 use std::fmt;
@@ -57,9 +56,10 @@ fn wrap_backtrace_error() {
         .cause()
         .and_then(|err| err.downcast_ref::<io::Error>())
         .is_some());
-    assert!(err.backtrace().is_some());
-    assert!(err.backtrace().is_empty());
-    assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
+
+    let bt = || err.backtrace().unwrap();
+    assert!(bt().is_empty());
+    assert_eq!(bt().is_empty(), bt().to_string().trim().is_empty());
 }
 
 #[derive(Fail, Debug)]
@@ -92,7 +92,8 @@ fn wrap_enum_error() {
         .cause()
         .and_then(|err| err.downcast_ref::<fmt::Error>())
         .is_some());
-    assert!(err.backtrace().is_some());
-    assert!(err.backtrace().is_empty());
-    assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
+
+    let bt = || err.backtrace().unwrap();
+    assert!(bt().is_empty());
+    assert_eq!(bt().is_empty(), bt().to_string().trim().is_empty());
 }

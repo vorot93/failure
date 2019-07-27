@@ -33,7 +33,7 @@ differences. Most importantly, the cause and backtrace methods on Error do not
 return Options - an Error is *guaranteed* to have a cause and a backtrace.
 
 ```rust
-// Both methods are guaranteed to return an &Fail and an &Backtrace
+// Both methods are guaranteed to return an &dyn Fail and an &Backtrace
 println!("{}, {}", error.cause(), error.backtrace())
 ```
 

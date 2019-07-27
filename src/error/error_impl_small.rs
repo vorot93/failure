@@ -52,7 +52,7 @@ impl<F: Fail> From<F> for ErrorImpl {
         };
 
         unsafe {
-            let vtable = mem::transmute::<_, TraitObject>(&failure as &Fail).vtable;
+            let vtable = mem::transmute::<_, TraitObject>(&failure as &dyn Fail).vtable;
 
             let ptr: *mut InnerRaw<F> = match Heap.alloc(Layout::new::<InnerRaw<F>>()) {
                 Ok(p)   => p as *mut InnerRaw<F>,
@@ -76,9 +76,9 @@ impl<F: Fail> From<F> for ErrorImpl {
 }
 
 impl ErrorImpl {
-    pub(crate) fn failure(&self) -> &Fail {
+    pub(crate) fn failure(&self) -> &dyn Fail {
         unsafe {
-            mem::transmute::<TraitObject, &Fail>(TraitObject {
+            mem::transmute::<TraitObject, &dyn Fail>(TraitObject {
                 data: &self.inner.failure as *const FailData,
                 vtable: self.inner.vtable,
             })
